@@ -74,7 +74,7 @@ TWGVideoBusControl {
 			setSpeed = setSpeed[0];
 		};
 		if (speed != setSpeed) {
-			if (hard) {this.set(\speed, [setSpeed, ramp, curve])};
+      if (hard) {this.set(\speed, [setSpeed, ramp, curve])};
 			speed = setSpeed;
 			{parent.client.gui.bSpeedNum[index].value_(speed)}.defer;
 		}

@@ -24,7 +24,7 @@ TWGVideoControl {
 		var setRouting = routing;
 		var routingChanged = false;
 
-		pairs.postln;
+    //pairs.debug("TWGVideoControl set");
 
 		pairs.pairsDo { |key, val|
 			var busids = (\a: 0, \b: 1, \c: 2, \d: 3, \e: 4);
@@ -47,15 +47,16 @@ TWGVideoControl {
 						buses[busindex].db_(v, hard: false);
 					}
 					{k == \speed} {
-						var speed, ramp = 0;
+						var speed, ramp = 0, curve = 1;
 						case
 						{v.isArray} {
 							speed = v[0];
 							ramp = v[1] ?? 0;
+              curve = v[2] ?? 1;
 						}
 						{v.isNumber} {speed = v};
 
-						msg[(busindex*7)+2] = speed.asString + ramp.asString;
+						msg[(busindex*7)+2] = speed.asString + ramp.asString + curve.asString;
 						buses[busindex].speed_(speed, hard: false);
 					}
 					{k == \transport} {
@@ -145,7 +146,7 @@ TWGVideoControl {
 			}
 
 		};
-		msg.postln;
+    //msg.debug("TWGVideoControl set");
 		if (client.mode == \control) {client.serverAddress.sendMsg('/fromsm', *msg)};
 	}
 

@@ -2,7 +2,7 @@ TWGVideoClient {
 	var <name, <>serverAddress, <mode;
 	var <gui, <ping, <connected, <>control;
 
-	*new {|name, serverAddress, mode|
+	*new {|name, serverAddress, mode = \control|
 		^super.newCopyArgs(name, serverAddress, mode).init;
 	}
 
