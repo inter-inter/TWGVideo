@@ -1,0 +1,204 @@
+TITLE:: TWGVideoServer
+summary:: Media playback engine developed for syncing video to multibus audio playback on the s
+categories:: Undocumented classes
+related:: Classes/TWGVideoClient, Classes/TWGVideoControl
+
+DESCRIPTION::
+TWGVideo is a library of classes developed to facilitate the control and synchronization of multiple media buses across a network for theater performances.
+
+TWGVideoServer is the server-side module. It instatiates synths on the local audio server for audio playback, and returns messages to the video server and to any clients on the network running the TWGVideoClient module.
+
+CLASSMETHODS::
+
+METHOD:: new
+Returns a new link::Classes/TWGVideoServer:: object.
+
+ARGUMENT:: showspath
+A string indicating the path to the media directory to be used. The default is "~/Desktop/Shows".
+Audio files should be saved with a three-digit numeric prefix ("001 media1.wav", "002 media2.wav", etc.) under the directory "showspath/showname/Media/Audio/" and video files to the corresponding "Video" folder.
+
+ARGUMENT:: legacy
+Set the legacy flag to true to send OSC messages in the legacy format to the stage manager computer (link::Classes/NetAddr:: stored in the strong::erin:: variable). The default value is false.
+
+INSTANCEMETHODS::
+
+METHOD:: soundfiles
+(describe method here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: oscdefs
+(describe method here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: connectedClients
+(describe method here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: load_files
+(describe method here)
+
+ARGUMENT:: action
+(describe argument here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: out_buses
+(describe method here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: video
+(describe method here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: loaded
+(describe method here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: start_audio
+(describe method here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: init
+(describe method here)
+
+ARGUMENT:: showspath
+(describe argument here)
+
+ARGUMENT:: legacy
+(describe argument here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: erin
+(describe method here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: legacy_mode
+(describe method here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: updateClient
+(describe method here)
+
+ARGUMENT:: addr
+(describe argument here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: show_path
+(describe method here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: win
+(describe method here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: cleanup
+(describe method here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: preset
+(describe method here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: makeGUI
+(describe method here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: matrix_arr
+(describe method here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: businfo
+(describe method here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: set_matrix
+(describe method here)
+
+ARGUMENT:: arr
+(describe argument here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: running
+(describe method here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: buses
+(describe method here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: boot
+(describe method here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: set_matrix_action
+(describe method here)
+
+ARGUMENT:: row
+(describe argument here)
+
+ARGUMENT:: col
+(describe argument here)
+
+ARGUMENT:: val
+(describe argument here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: folder
+(describe method here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: connectedClientNames
+(describe method here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: matrix
+(describe method here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: ffspeed
+(describe method here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: load_show
+(describe method here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: stop_audio
+(describe method here)
+
+returns:: (describe returnvalue here)
+
+
+EXAMPLES::
+
+code::
+(some example code)
+::
