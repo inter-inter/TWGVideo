@@ -73,16 +73,17 @@ TWGVideoControl {
 			{key == \media} {[0, 7, 14, 21, 28].do({|i| msg[i] = val})}
 			{key == \position} {[1, 8, 15, 22, 29].do({|i| msg[i] = val})}
 			{key == \speed} {
-				var speed, ramp = 0;
+				var speed, ramp = 0, curve = 1;
 				case
 				{val.isArray} {
 					speed = val[0];
 					ramp = val[1] ?? 0;
+					curve = val[2] ?? 1;
 				}
 				{val.isNumber} {speed = val};
 
 				buses.do({|bus, i|
-					msg[(i*7)+2] = speed.asString + ramp.asString;
+					msg[(i*7)+2] = speed.asString + ramp.asString + curve.asString;
 					buses[i].speed_(speed, hard: false);
 				})
 			}
