@@ -67,7 +67,12 @@ TWGVideoBusControl {
 	}
 
 	speed_ { |setSpeed, ramp, hard = true|
-		if (setSpeed.isArray && ramp.isNil) {# setSpeed, ramp = setSpeed};
+		var curve = 1;
+		if (setSpeed.isArray && ramp.isNil) {
+			curve = setSpeed[2] ?? 1;
+			ramp = setSpeed[1] ?? 0;
+			setSpeed = setSpeed[0];
+		};
 		if (speed != setSpeed) {
 			if (hard) {this.set(\speed, [setSpeed, ramp])};
 			speed = setSpeed;
