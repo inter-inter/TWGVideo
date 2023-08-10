@@ -35,9 +35,9 @@ TWGVideoClientGUI {
 		bGainSlider = Array.newClear(5);
 		bGainText = Array.newClear(5);
 
-		ppImage = Image.open(Platform.userExtensionDir +/+ "TWGVideo/icons/pp.png");
-		ffImage = Image.open(Platform.userExtensionDir +/+ "TWGVideo/icons/ff.png");
-		rwImage = Image.open(Platform.userExtensionDir +/+ "TWGVideo/icons/rw.png");
+		ppImage = Image.open("icons/pp.png".resolveRelative);
+		ffImage = Image.open("icons/ff.png".resolveRelative);
+		rwImage = Image.open("icons/rw.png".resolveRelative);
 
 		win = Window("TWG Video Client: " + client.name, bounds.center_(Point(1200, 500))).front;
 		win.onClose = {client.quit};

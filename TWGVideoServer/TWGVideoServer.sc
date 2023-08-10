@@ -1,7 +1,7 @@
 // updated andy and eric 6/1/2023
 
 TWGVideoServer {
-  var <win, <video, <folder, <soundfiles, <loaded = false, <running = false, <>show_path, <out_buses, <matrix, <matrix_arr, <buses, <businfo, <>preset, <ffspeed;
+  var <win, <video, <folder, <soundfiles, <loaded = false, <running = false, <>legacy_mode = false, <>show_path, <out_buses, <matrix, <matrix_arr, <buses, <businfo, <>preset, <ffspeed;
   var <connectedClients, <connectedClientNames;
   var <erin; // legacy
 
@@ -37,20 +37,21 @@ TWGVideoServer {
     };
   }
 
-  *new { |hostname = "localhost", port = 10000, pathname = "~/Desktop/Shows"|
-  //*new { |hostname = "localhost", port = 10000, pathname = "C:/Users/ADDAMS-MORTICIA/Desktop/Shows"|
-    ^super.new.init(hostname, port, pathname);
+
+  *new { |showspath = "~/Desktop/Shows", legacy = false|
+    ^super.new.init(showspath, legacy);
   }
 
-  init { |hostname, port, pathname|
-    video = NetAddr(hostname, port);
-    folder = PathName(pathname.standardizePath);
+  init { |showspath, legacy|
+    legacy_mode = legacy;
+    folder = PathName(showspath.standardizePath);
     soundfiles = ();
     matrix_arr = 0!5!6;
     connectedClients = [];
     connectedClientNames = [];
     ffspeed = 8;
     preset = 1;
+    video = NetAddr("localhost", 10000);
     // legacy
     erin = NetAddr("192.168.2.2", 7400);
 
@@ -162,8 +163,8 @@ TWGVideoServer {
       };
       connectedClients.do(_.sendMsg('/fromvideo', \level, busNum, sideNum, peakLevel, rmsLevel));
       // legacy
-      erin.sendMsg(("/db/" ++ bus ++ "/" ++ side).asSymbol, rmsLevel.ampdb.max(-90));
-    }, '/db');
+      if (legacy_mode, {erin.sendMsg(("/db/" ++ bus ++ "/" ++ side).asSymbol, rmsLevel.ampdb.max(-90));
+    }, '/db')});
 
     OSCdef(\playhead, { |msg|
       var index = msg[2].asInteger;
@@ -175,21 +176,18 @@ TWGVideoServer {
         if (index < 3) {
           video.sendMsg(("pos_" ++ letter).asSymbol, pos);
         };
-        //if (~transportState[index] != \paused) {~connectedClients.do(_.sendMsg('/fromvideo', \pos, index, pos * 100))};
         connectedClients.do(_.sendMsg('/fromvideo', \pos, index, pos));
         // legacy
-        erin.sendMsg(("/pos/" ++ letter).asSymbol, pos);
+        if (legacy_mode, {erin.sendMsg(("/pos/" ++ letter).asSymbol, pos)});
       };
     }, '/playhead');
 
-    //ANDY EDIT
     OSCdef(\rate, { |msg|
       var index = msg[2].asInteger;
       var buf = buses[index].buffer;
       if (buf.notNil) {
         var rate = msg[3];
         var letter = (65 + index).asAscii;
-        //if (~transportState[index] == \playing) {~connectedClients.do(_.sendMsg('/fromvideo', \speed, index, rate))};
         businfo[index][\speed] = rate;
         connectedClients.do(_.sendMsg('/fromvideo', \speed, index, rate));
       }
@@ -200,8 +198,6 @@ TWGVideoServer {
       var rate, ramp, curve;
       var osc_buses = msg[1..35].clump(7);
       var matrix = msg[41];
-
-      //msg.postln;
 
       osc_buses.do { |bus, i|
         # media, pos, speed, zoom, state, db, blank = bus;
@@ -216,7 +212,7 @@ TWGVideoServer {
             buses[i].set(\on, 0);
             buses[i].buffer = nil;
           } {
-            buses[i].set(\buf, soundfiles[media].buf, \on, 1); // should it reset rate/pos?
+            buses[i].set(\buf, soundfiles[media].buf, \on, 1);
             buses[i].buffer = soundfiles[media].buf;
           };
         };
@@ -224,7 +220,6 @@ TWGVideoServer {
           var buf = buses[i].buffer;
           if (buf.notNil) {
             buses[i].set(\cuePos, buf.atSec(pos.asFloat * 0.01 * buf.duration), \cueTrig, 1)
-            //buses[i].set(\cuePos, pos.asFloat * 0.01 * buf.duration * buf.sampleRate, \cueTrig, 1)
           };
         };
         if (speed != 'n' && speed.notNil) {
@@ -245,7 +240,6 @@ TWGVideoServer {
             preset = zoom.asInteger;
 						defer {win.presetNum.value_(preset)};
             video.sendMsg(\preset, preset);
-            //ANDY EDIT
             connectedClients.do(_.sendMsg('/fromvideo', \preset, preset));
           };
 
@@ -253,7 +247,7 @@ TWGVideoServer {
             video.sendMsg(\preset_trigger, 1);
           };
         };
-        if (state != 'n' && state.notNil) {
+        if (state != 'n' && state.notNil && legacy_mode.not) {
           buses[i].set(\state, state.asFloat);
           businfo[i][\transport] = state;
           connectedClients.do(_.sendMsg('/fromvideo', \transport, i, state));
@@ -291,9 +285,8 @@ TWGVideoServer {
       subarr.do { |val, col|
         defer { win.matrix_butts[row][col].value_(val.asBoolean) };
         matrixMsg = matrixMsg.addAll([col, row, val]);
-        //connectedClients.do(_.sendMsg('/fromvideo', \routing, col, row, val));
         // legacy
-        erin.sendMsg('/matrix', col, row, val);
+        if (legacy_mode, {erin.sendMsg('/matrix', col, row, val)});
       };
     };
     connectedClients.do(_.sendMsg('/fromvideo', \routing, *matrixMsg));
@@ -303,10 +296,9 @@ TWGVideoServer {
 
   set_matrix_action { |row, col, val|
     matrix_arr[row][col] = val;
-    //this.set_matrix.(matrix_arr);
     connectedClients.do(_.sendMsg('/fromvideo', \route, col, row, val));
     //legacy
-    erin.sendMsg('/matrix', col, row, val);
+    if (legacy_mode, {erin.sendMsg('/matrix', col, row, val)});
     matrix.set(\routing, matrix_arr);
   }
 
@@ -321,9 +313,8 @@ TWGVideoServer {
         var side = ["l", "r"][j];
         meter.peakLevel = 0;
         meter.value = 0;
-
         connectedClients.do(_.sendMsg(("/db/" ++ bus ++ "/" ++ side).asSymbol, -90));
-        erin.sendMsg(("/db/" ++ bus ++ "/" ++ side).asSymbol, -90);
+        if (legacy_mode, erin.sendMsg(("/db/" ++ bus ++ "/" ++ side).asSymbol, -90));
       };
     };
   }
@@ -344,8 +335,7 @@ TWGVideoServer {
   load_files { |action|
     var s = Server.local;
     fork {
-      //var pathname = PathName(show_path.fullPath +/+ "Media/Audio/");
-	var pathname = PathName(show_path.fullPath +/+ "media/Audio/");
+      var pathname = PathName(show_path.fullPath +/+ "Media/Audio/"); //
       soundfiles.do { |sf| sf.buf.free; };
       s.sync;
       soundfiles = ();
@@ -364,7 +354,6 @@ TWGVideoServer {
         };
       };
       defer { action.();
-        // ANDY EDIT
         loaded = true;
         connectedClients.do({ |client| this.updateClient(client) });
       };
@@ -374,7 +363,6 @@ TWGVideoServer {
   cleanup {
     soundfiles.do { |sf| sf.buf.free; };
   }
-
 
   updateClient { |addr|
     if (loaded) {
