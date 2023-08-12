@@ -1,0 +1,87 @@
+TITLE:: TWGVideoClient
+summary:: Network client control module for the TWGVideo system.
+categories:: TWGVideo
+related:: Classes/TWGVideoServer, Classes/TWGVideoControl
+
+DESCRIPTION::
+(put long description here)
+
+
+CLASSMETHODS::
+
+METHOD:: new
+(describe method here)
+
+ARGUMENT:: name
+(describe argument here)
+
+ARGUMENT:: serverAddress
+(describe argument here)
+
+ARGUMENT:: mode
+(describe argument here)
+
+returns:: (describe returnvalue here)
+
+
+INSTANCEMETHODS::
+
+METHOD:: serverAddress
+(describe method here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: control
+(describe method here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: ping
+(describe method here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: name
+(describe method here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: init
+(describe method here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: quit
+(describe method here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: mode
+(describe method here)
+
+ARGUMENT:: setmode
+(describe argument here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: connected
+(describe method here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: connect
+(describe method here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: gui
+(describe method here)
+
+returns:: (describe returnvalue here)
+
+
+EXAMPLES::
+
+code::
+(some example code)
+::
