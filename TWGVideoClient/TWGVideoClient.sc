@@ -86,6 +86,8 @@ TWGVideoClient {
 
 		// midi from AKAI
     if (connectMIDI) {
+      MIDIClient.init;
+      MIDIIn.connectAll;
       MIDIdef.noteOn(\akai, {|val, num, chan, src|
         num.postln;
         defer {
@@ -112,7 +114,6 @@ TWGVideoClient {
 
 	connect {
 		serverAddress.sendMsg('/ping', name);
-		MIDIIn.connectAll;
 	}
 
 	mode_ {|setmode|
