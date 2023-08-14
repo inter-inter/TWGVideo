@@ -2,11 +2,11 @@ TWGVideoClient {
 	var <name, <>serverAddress, <mode;
 	var <gui, <ping, <connected, <>control;
 
-	*new {|name, serverAddress, mode = \control, connectMIDI = false|
-    ^super.newCopyArgs(name, serverAddress, mode).init(connectMIDI);
+	*new {|name, serverAddress, mode = \control|
+    ^super.newCopyArgs(name, serverAddress, mode).init();
 	}
 
-	init { |connectMIDI|
+	init {
 		gui = TWGVideoClientGUI(this);
 		this.mode_(mode);
 		connected = false;
@@ -82,31 +82,6 @@ TWGVideoClient {
 				}
 			);
 		}, '/fromvideo');
-
-
-		// midi from AKAI
-    if (connectMIDI) {
-      MIDIClient.init;
-      MIDIIn.connectAll;
-      MIDIdef.noteOn(\akai, {|val, num, chan, src|
-        num.postln;
-        defer {
-          case
-          { num == 48 } { gui.gRWTog.valueAction_(1) }
-          { num == 49 } { gui.gFFTog.valueAction_(1) }
-          { num == 50 } { gui.gPPTog.valueAction_(1) }
-          { num == 46 } { gui.gPPTog.valueAction_(0) }
-          { num == 40 } { gui.bRWTog[0].valueAction_(1) }
-          { num == 41 } { gui.bFFTog[0].valueAction_(1) }
-          { num == 42 } { gui.bRWTog[1].valueAction_(1) }
-          { num == 43 } { gui.bFFTog[1].valueAction_(1) }
-          { num == 36 } { gui.bPPTog[0].valueAction_(1) }
-          { num == 37 } { gui.bPPTog[0].valueAction_(0) }
-          { num == 38 } { gui.bPPTog[1].valueAction_(1) }
-          { num == 39 } { gui.bPPTog[1].valueAction_(0) }
-        }
-      }, chan: 9);
-    };
 
 
 		^control = TWGVideoControl(this);
