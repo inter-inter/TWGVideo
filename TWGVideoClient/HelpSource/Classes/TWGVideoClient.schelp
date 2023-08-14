@@ -1,83 +1,61 @@
 TITLE:: TWGVideoClient
 summary:: Network client control module for the TWGVideo system.
 categories:: TWGVideo
-related:: Classes/TWGVideoServer, Classes/TWGVideoControl
+related:: Classes/TWGVideoServer, Classes/TWGVideoControl, Guides/TWGVideo Setup and API
 
 DESCRIPTION::
-(put long description here)
+TWGVideo is a library of classes developed to facilitate the control and synchronization of five audiovisual channels (buses) across a network with VCR-style functionalilty.
+
+link::Classes/TWGVideoClient:: works in tandem with a link::Classes/TWGVideoControl:: object, which contains a wide range of convenience methods for sending control messages to the connected link::Classes/TWGVideoServer::. Methods can be executed directly in SuperCollider or through the link::Classes/TWGVideoClientGUI:: which opens in a window upon startup.
 
 
 CLASSMETHODS::
 
 METHOD:: new
-(describe method here)
+Create a new link::Classes/TWGVideoClient:: object.
 
 ARGUMENT:: name
-(describe argument here)
+A unique name for this client (required).
 
 ARGUMENT:: serverAddress
-(describe argument here)
+The link::Classes/NetAddr:: of the link::Classes/TWGVideoServer:: to which this client will send messages (required).
 
 ARGUMENT:: mode
-(describe argument here)
+Optionally initiate the client's strong::mode:: variable. If set to code::control::, the client will operate with full functionality. If anything else, the client will open in "monitor" mode, meaning it will receive and display information from the server in the GUI but will not send control messages.
 
-returns:: (describe returnvalue here)
+returns:: This client's child link::Classes/TWGVideoControl:: object. **Note: The code::.new:: method returns a link::Classes/TWGVideoControl:: object for convenience so that the instance variable used on initiation can immeiately be used to call control methods. To access link::Classes/TWGVideoClient::, use the code::TWGVideoControl.client:: method.
 
 
 INSTANCEMETHODS::
 
 METHOD:: serverAddress
-(describe method here)
 
-returns:: (describe returnvalue here)
+returns:: The link::Classes/NetAddr:: to which this client will connect and send messages.
 
 METHOD:: control
-(describe method here)
 
-returns:: (describe returnvalue here)
-
-METHOD:: ping
-(describe method here)
-
-returns:: (describe returnvalue here)
+returns:: This client's child link::Classes/TWGVideoControl:: object.
 
 METHOD:: name
-(describe method here)
 
-returns:: (describe returnvalue here)
-
-METHOD:: init
-(describe method here)
-
-returns:: (describe returnvalue here)
+returns:: This client's name.
 
 METHOD:: quit
-(describe method here)
-
-returns:: (describe returnvalue here)
+End this client's connection to the server and close the GUI window.
 
 METHOD:: mode
-(describe method here)
-
-ARGUMENT:: setmode
-(describe argument here)
-
-returns:: (describe returnvalue here)
-
-METHOD:: connected
-(describe method here)
-
-returns:: (describe returnvalue here)
+Get or set the client's mode (see above).
 
 METHOD:: connect
-(describe method here)
+Try to establish a connection with the server. This method is called by clicking the "Reconnect" button in the GUI window.
 
-returns:: (describe returnvalue here)
+METHOD:: connected
+
+returns:: link::Classes/True:: if the client has successfully established a connection to the server.
 
 METHOD:: gui
-(describe method here)
 
-returns:: (describe returnvalue here)
+returns:: This client's child link::Classes/TWGVideoControl:: object.
 
 
 EXAMPLES::

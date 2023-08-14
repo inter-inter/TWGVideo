@@ -1,7 +1,7 @@
 TITLE:: TWGVideoControl
 summary:: Control module for the TWGVideoClient component of the TWGVideo system.
 categories:: TWGVideo
-related:: Classes/TWGVideoClient, Classes/TWGVideoBusControl
+related:: Classes/TWGVideoClient, Classes/TWGVideoBusControl, Guides/TWGVideo Setup and API
 
 DESCRIPTION::
 Houses convenience functions for generating OSC messages to TWGVideoServer

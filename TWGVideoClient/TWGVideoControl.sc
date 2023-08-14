@@ -181,7 +181,7 @@ TWGVideoControl {
 		buses.do({|bus, i|
 			bus.reset;
 		});
-		this.set(\preset, 1, \routing, [], *pairs);
+		this.set(\preset, 1, \routing, [], \ffspeed, 8, *pairs);
 	}
 
 	// set values for all buses

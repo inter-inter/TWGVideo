@@ -1,24 +1,24 @@
 TITLE:: TWGVideoServer
 summary:: Server-side media playback engine for the TWGVideo system.
 categories:: TWGVideo
-related:: Classes/TWGVideoServerWindow, Classes/TWGVideoClient, Classes/TWGVideoControl
+related:: Classes/TWGVideoServerWindow, Classes/TWGVideoClient, Classes/TWGVideoControl, Guides/TWGVideo Setup and API
 
 DESCRIPTION::
-TWGVideo is a library of classes developed to facilitate the control and synchronization of multiple media buses across a network for theater performances.
+TWGVideo is a library of classes developed to facilitate the control and synchronization of five audiovisual channels (buses) across a network with VCR-style functionalilty.
 
-link::Classes/TWGVideoServer:: is the server-side module. It accesses a media directory and manages five playback buses on the local SuperCollider server, sending OSC messages to an external application for synchronized video playback. The server is controllable via OSC, receiving and returning messages to any number of connected link::Classes/TWGVideoClient:: objects on the network.
+link::Classes/TWGVideoServer:: is the server-side module. It accesses a media directory runs audio playback on the local SuperCollider server, sending OSC messages to an external application for synchronized video playback. The server is controllable via OSC, receiving and returning messages to any number of connected link::Classes/TWGVideoClient:: objects on the network.
 
 CLASSMETHODS::
 
 METHOD:: new
-Returns a new link::Classes/TWGVideoServer:: object.
+Create a new link::Classes/TWGVideoServer:: object and boot the SuperCollider server. The audio server will try to boot with the audio device "ASIO : Dante Virtual Soundcard (x64)" if available. Upon successful initiation, a link::Classes/TWGVideoServerWindow:: will open.
 
 ARGUMENT:: showspath
-A string indicating the path to the media directory to be used. The default is "~/Desktop/Shows".
+A string indicating the path to the media directory to be used.
 Audio files should be saved with a two-digit numeric prefix ("01 media1.wav", "02 media2.wav", etc.) under the directory "<showspath>/<showname>/Media/Audio/" and video files to the corresponding "Video" folder.
 
 ARGUMENT:: legacy
-Set the legacy flag to link::Classes/True:: to send OSC messages in the legacy format to the stage manager computer (link::Classes/NetAddr:: stored in the strong::erin:: variable). The default value is false.
+Set the legacy flag to link::Classes/True:: to send OSC messages in the legacy format to the stage manager computer (link::Classes/NetAddr:: stored in the strong::erin:: variable).
 
 INSTANCEMETHODS::
 
@@ -96,10 +96,13 @@ METHOD:: load_show
 Load audio files for currently selected show. (Accessed via GUI "Load Show" button).
 
 
-
-
 EXAMPLES::
 
 code::
-(some example code)
+// Initiate the video server on the server computer using the following line.
+~vidserver = TWGVideoServer();
+
+//Quit server.
+~vidserver.quit;
+)
 ::

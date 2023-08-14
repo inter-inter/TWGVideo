@@ -1,7 +1,7 @@
 TITLE:: TWGVideoBusControl
 summary:: Single-bus control module for the TWGVideoClient component of the TWGVideo system.
 categories:: TWGVideo
-related:: Classes/TWGVideoControl
+related:: Classes/TWGVideoControl, Guides/TWGVideo Setup and API
 
 DESCRIPTION::
 (put long description here)

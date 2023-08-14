@@ -1,0 +1,180 @@
+TITLE:: TWGVideo Setup and API
+summary:: How to set up and use the TWGVideo Class library
+categories:: TWGVideo
+related:: Classes/TWGVideoServer, Classes/TWGVideoClient, Classes/TWGVideoControl, Classes/TWGVideoBusControl
+
+SECTION:: Setup
+
+Initiate the video server on the server computer using
+code::
+~videoserver = TWGVideoServer();
+::
+
+Set up a connection to the server by initiating link::Classes/TWGVideoClient:: on a client computer with a unique name for the computer and the server computer's address.
+code::
+(
+~morticia = NetAddr("192.168.2.101", 57120);
+v = TWGVideoClient("chowder", ~morticia);
+)
+::
+
+
+SECTION:: TWGVideoControl API
+
+Once a link::Classes/TWGVideoClient:: object is initiated, it returns a link::Classes/TWGVideoControl:: object which in turn contains five link::Classes/TWGVideoBusControl:: objects, accessible via the instance variables strong::a::, strong::b::, strong::c::, strong::d::, and strong::e::.
+
+code::
+v // Returns the TWGVideoControl object
+v.b // Reterns the TWGVideoBusControl object for the B bus
+::
+
+SUBSECTION:: Basic Methods
+
+The "long way" to send control messages to a bus is the universal set message, which takes value pairs as arguments.
+code::
+(
+v.a.set(
+	\media, 2,
+	\position, 20,
+	\speed, 1.03,
+	\db, 0,
+	\transport, \playing,
+	\routing, [\ear1, \room]
+);
+)
+::
+
+
+Alternatively, use transport commands ("play", "pause", "ff", "rw") followed by optional value pairs.
+
+code::
+// The following two lines are equivalent:
+v.a.play(\media, 5, \position, 0)
+v.a.set(\media, 5, \position, 0, \transport, \playing)
+::
+
+If no values are given, the command will simply change the transport state of the bus, leaving other variables unchanged.
+code::
+v.a.pause
+v.a.ff
+v.a.rw
+v.a.play
+::
+The first argument of the "ff" and "rw" methods sets the global fastforward/rewind speed multiplier.
+code::
+v.a.ff(48)
+v.a.rw(24, \position, 100, \speed, 1)
+::
+
+SUBSECTION:: Cue & Reset
+
+The "cue" method is a convenience feature which conforms an optional list of parameters (media, position, speed, db) to a default "play" message.
+
+NOTE::Unlike the "play" method, "cue" will update all parameters to the default values if not explicitly overridden in the arguments list.::
+
+code::
+
+//Instead of this...
+v.a.play(\media, 5, \position, 42.3, \speed, 2, \db, -inf)
+
+//...this:
+v.a.cue(5, 42.3, 2, -inf) // Play media 5 from position 42.3 at double speed, muted.
+::
+Cue sends default values for any arguments not given:
+code::
+v.a.cue(4, 20) // Play media 4 from position 20 at regular speed and full volume.
+
+v.a.cue // A cue message with no arguments is equivalent to...
+v.a.play(\media, 1, \position, 0, \speed, 1, \db, 0)
+::
+
+The "reset" message clears the media from a bus and sets everything to default values (optionally overriden by any pairs given)
+
+code::
+v.a.reset // ... is equivalent to...
+v.a.pause(\media, 0, \position, 0, \speed, 1, \db, 0)
+
+v.a.reset(\db, -inf) // This is modified reset message would also mute the A bus
+::
+
+NOTE::The cue and reset methods do not affect the audio routing of individual buses.::
+
+SUBSECTION:: Global Methods
+
+Any of the above methods can also be used to send the same message to all buses simultaneously.
+
+code::
+v.play(\speed, 1, \db, -20) // Set all buses to playing at speed 1 and db -20 (without changing anything else)
+v.cue(2) // Start media 2 playing at default settings in all buses simultaneously
+v.reset // Clear all buses and reset to default values.
+::
+
+In addition to resetting the buses, the global reset method also clears audio routing and sets video preset and fastforward speed to default values.
+
+code::
+// These two lines are equivalent:
+v.reset
+v.pause(\media, 0, \position, 0 \speed, 1, \db, 0, \routing, [], \preset, 1, \ffspeed, 8)
+::
+
+SUBSECTION:: Getting and Setting Individual Values
+
+In addition to set, play, pause, ff, rw, cue and reset, names of individual parameters can be called as methods to get or set individual values.
+
+code::
+v.b.speed // Returns the speed of bus B.
+v.b.position_(5.6) // Set the position of bus B.
+v.preset_(3) // Set the video preset
+v.ffspeed_(48) // Set the global ff/rw speed multiplier
+v.ffspeed = 48 // An alternative way to write the above (does exactly the same thing).
+v.b.transport // Check the transport state of bus B.
+v.b.transport_(\playing) // Another way to write "v.b.play".
+::
+If you give more than one argument to set the speed, the second is taken as a ramp time, and a third argument modifies the ramp curve.
+code::
+v.b.speed_(3, 1) // Ramp to a speed of 3 over 1 second.
+
+v.b.speed_(1, 1, Env.shapeNumber(\sin)) // Ramp to normal speed with a \sin shape curve. See Env documentation for list of accepted curve shapes.
+
+// Also works when passing speed to another method as a single argument using an array...
+v.b.play(\speed, [-2, 1, 3])
+v.b.speed = [-2, 1, 3] // This also works.
+::
+
+You can send the "force" argument when setting the video preset to send a message to force the switcher to refresh outputs.
+code::
+v.preset_(3, force: true) // set to preset 3 and force refresh (will refresh even if preset is already 3)
+v.preset_(force: true) // force refresh of the current preset
+::
+
+SUBSECTION:: Matrix Routing
+
+There are several different ways to set audio routing. The most basic way to send a message containing the complete routing of the system is to pass pairs to the "routing" setter method. Each pair is like a patch cord linking a bus or array of buses with an output or array of outputs.
+
+code::
+v.routing_(\a, \room, \b, \ear1) // Sends bus A to the room and bus B to ear 1.
+v.routing = [\a, \room, \b, \ear1] // ... or use an array.
+
+v.routing_(\a, [\room, \ear1, \ear2]) // route a bus to multiple channels
+v.routing_([\b, \d], \ear2, [\a, \e], \room, [\a, \b, \c, \d, \e], \xtra) // make the matrix smile
+
+v.routing_() // clear routing
+::
+You can also use the "route" and "unroute" commands to turn connections on and off without overriding the current routing.
+code::
+v.route(\b, \xtra) // route bus B to the extra channel without changing anything else.
+v.unroute(\b, \xtra) // take it out
+::
+You can also get and set the routing of individual buses.
+code::
+v.a.routing_(\ear1, \ear2, \room) // Sets the routing of bus A only (leaves the rest of the routing intact)
+::
+
+WARNING::When you get the routing variable, it will return an event rather than an array of value pairs. So if you want to store the routing and then set it later, you have to use "asPairs".::
+code::
+x = v.routing
+v.routing_() // Clear routing.
+v.routing_(x) // This won't work.'
+v.routing_(x.asPairs) // This will!
+::
+
