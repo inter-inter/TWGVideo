@@ -8,6 +8,8 @@ TWGVideoClientGUI {
 	<presetNum, <presetRetriggerBut,
 	<reconnectBut;
 
+	var <>busButtonAction, <>busButtonShiftAction, <>routingButtonAction, <>routingButtonShiftAction;
+
 	*new {|client|
 		^super.newCopyArgs(client).init;
 	}
@@ -117,8 +119,10 @@ TWGVideoClientGUI {
 				})
 			});
 
+
+			Button(view, Rect(60 - 33, 0, 25, 15)).font_(small_font.copy.bold_(false)).string_("all").mouseDownAction_({ |view, x, y, modifiers| if (modifiers.isShift) { routingButtonShiftAction.value() } { routingButtonAction.value() } });
 			5.do { |busno|
-				StaticText(view, Rect(63 + (busno * 23), 0, 15, 15)).font_(small_font).string_((busno + 65).asAscii);
+				Button(view, Rect(60 + (busno * 23), 0, 15, 15)).font_(small_font).string_((busno + 65).asAscii).mouseDownAction_({ |view, x, y, modifiers| if (modifiers.isShift) { routingButtonShiftAction.value(client.control.buses[busno]) } { routingButtonAction.value(client.control.buses[busno]) } });
 			};
 			["Ear 1", "Ear 2", "Ear 3", "Room", "Xtra", "(Phones)"].do { |name, i|
 				StaticText(view, Rect(0, 17 + (i * 23), 52, 15)).font_(small_font).string_(name).align_(\right);
@@ -130,7 +134,7 @@ TWGVideoClientGUI {
 		busView = {|win, bounds, index|
 			var view = View(win, bounds).background_(Color.gray(0.8));
 
-			StaticText(view, Rect(12, 0, 50, 30)).string_((index + 65).asAscii).font_(Font("Input Sans", 20, bold: true));
+			Button(view, Rect(5, 5, 30, 20)).states_([[(index + 65).asAscii]]).font_(Font("Input Sans", 20, bold: true)).mouseDownAction_({ |view, x, y, modifiers| if (modifiers.isShift) { busButtonShiftAction.value(client.control.buses[index]) } { busButtonAction.value(client.control.buses[index]) } });
 
 			StaticText(view, Rect(40, 6, 100, 20)).string_("Media:").font_(body_font);
 			bMediaMenu[index] = PopUpMenu(view, Rect(80, 6, 245, 20)).items_(["", ""]).font_(body_font).action_({|x|
